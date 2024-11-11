@@ -6,12 +6,21 @@ use Illuminate\Support\Facades\Validator;
 
 class SiswaController extends Controller
 {
-    public function getsiswa()
+    public function index()
     {
-        $dt_siswa = Siswa::join('kelas', 'siswa.id_kelas', '=', 'kelas.id_kelas')
-            ->get();
-        return response()->json($dt_siswa);
+        return Siswa::all(); // Mengembalikan semua siswa
     }
+
+    // Metode untuk mendapatkan siswa berdasarkan ID
+    public function show($id)
+{
+    $siswa = Siswa::where('id_siswa', $id)->first(); // Menggunakan where untuk mencari berdasarkan id_siswa
+    if (!$siswa) {
+        return response()->json(['message' => 'Siswa not found'], 404); // Mengembalikan error jika tidak ditemukan
+    }
+    return response()->json($siswa); // Mengembalikan data siswa
+}
+
     
     public function createsiswa(Request $req)
     {

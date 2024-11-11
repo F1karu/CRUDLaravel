@@ -7,11 +7,20 @@ use Illuminate\Support\Facades\Hash;
     
 class KelasController extends Controller
 {
-    public function getkelas()
+    public function index()
     {
-        $dt_kelas=kelas::get();
-        return response()->json($dt_kelas);
+        return Kelas::all(); // Mengembalikan semua kelas
     }
+
+    // Metode untuk mendapatkan kelas berdasarkan ID
+    public function show($id)
+{
+    $kelas = kelas::where('id_kelas', $id)->first(); // Menggunakan where untuk mencari berdasarkan id_kelas
+    if (!$kelas) {
+        return response()->json(['message' => 'kelas not found'], 404); // Mengembalikan error jika tidak ditemukan
+    }
+    return response()->json($kelas); // Mengembalikan data kelas
+}
     public function createkelas(Request $req)
     {
         $validator = Validator::make($req->all(),[
@@ -33,37 +42,40 @@ class KelasController extends Controller
             return Response()->json(['status'=>false, 'message' => 'Gagal menambah kelas']);
         }}
 
-     public function updatekelas(Request $req, $id)
-    {
-        $validator = Validator::make($req->all(), [
-            'nama_kelas' => 'required',
-            'kelompok' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson());
-        }
-
-        $update = kelas::where('id_kelas', $id)->update([
-            'nama_kelas' => $req->get('nama_kelas'),
-            'kelompok' => $req->get('kelompok'),
-        ]);
-
+        public function updatekelas(Request $req, $id)
+        {
+            $validator = Validator::make($req->all(), [
+                'nama_kelas' => 'sometimes|required',
+                'kelompok' => 'sometimes|required',
+            ]);
+            
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson());
+            }
+            
+            $dataToUpdate = $req->only(['nama_kelas', 'kelompok']);
+            
+            
+            
+            $update = kelas::where('id_kelas', $id)->update($dataToUpdate);
+            
+    
         if ($update) {
             return response()->json(['status' => true, 'message' => 'Sukses mengubah kelas']);
         } else {
             return response()->json(['status' => false, 'message' => 'Gagal mengubah kelas']);
         }
     }
-
-    public function deletekelas($id)
-    {
-        $delete = kelas::where('id_kelas', $id)->delete();
-
-        if ($delete) {
-            return response()->json(['status' => true, 'message' => 'Sukses menghapus kelas']);
-        } else {
-            return response()->json(['status' => false, 'message' => 'Gagal menghapus kelas']);
-        }
+    
+    
+        public function deletekelas($id)
+        {
+            $delete = kelas::where('id_kelas', $id)->delete();
+    
+            if ($delete) {
+                return response()->json(['status' => true, 'message' => 'Sukses menghapus kelas']);
+            } else {
+                return response()->json(['status' => false, 'message' => 'Gagal menghapus kelas']);
+            }
 }
     }
