@@ -28,7 +28,7 @@ class SiswaController extends Controller
             'nama_siswa' => 'required',
             'tgl_lahir' => 'required',
             'gender' => 'required',
-            'alamat' => 'required',
+            'alamt' => 'required',
             'id_kelas' => 'required'
         ]);
 
